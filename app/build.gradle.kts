@@ -16,6 +16,50 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    ndk {
+      abiFilters.retainAll(setOf("arm64-v8a"))
+    }
+    packaging {
+      jniLibs {
+        useLegacyPackaging = true
+        pickFirsts +=
+          setOf(
+            "lib/arm64-v8a/libc++_shared.so",
+          )
+        keepDebugSymbols +=
+          setOf(
+            // dji msdk
+            "*/*/libconstants.so",
+            "*/*/libdji_innertools.so",
+            "*/*/libdjibase.so",
+            "*/*/libDJICSDKCommon.so",
+            "*/*/libDJIFlySafeCore-CSDK.so",
+            "*/*/libdjifs_jni-CSDK.so",
+            "*/*/libDJIRegister.so",
+            "*/*/libdjisdk_jni.so",
+            "*/*/libDJIUpgradeCore.so",
+            "*/*/libDJIUpgradeJNI.so",
+            "*/*/libDJIWaypointV2Core-CSDK.so",
+            "*/*/libdjiwpv2-CSDK.so",
+            "*/*/libFlightRecordEngine.so",
+            "*/*/libvideo-framing.so",
+            "*/*/libwaes.so",
+            "*/*/libagora-rtsa-sdk.so",
+            "*/*/libc++.so",
+            "*/*/libc++_shared.so",
+            "*/*/libmrtc_28181.so",
+            "*/*/libmrtc_agora.so",
+            "*/*/libmrtc_core.so",
+            "*/*/libmrtc_core_jni.so",
+            "*/*/libmrtc_data.so",
+            "*/*/libmrtc_log.so",
+            "*/*/libmrtc_onvif.so",
+            "*/*/libmrtc_rtmp.so",
+            "*/*/libmrtc_rtsp.so",
+          )
+      }
+    }
   }
 
   buildTypes {
@@ -56,4 +100,8 @@ dependencies {
   androidTestImplementation(platform(libs.androidx.compose.bom))
   androidTestImplementation(libs.androidx.ui.test.junit4)
   debugImplementation(libs.androidx.ui.tooling)
+
+  implementation(libs.dji.sdk)
+  compileOnly(libs.dji.sdk.provided)
+  runtimeOnly(libs.dji.sdk.network)
 }
