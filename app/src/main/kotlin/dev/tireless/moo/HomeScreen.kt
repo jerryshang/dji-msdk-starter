@@ -6,19 +6,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.tireless.moo.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -73,20 +77,32 @@ fun HomeScreen(
         }
       }
     }
-    Column(
-      modifier =
-        Modifier
-          .weight(1.0f)
-          .fillMaxWidth(),
-    ) {
-      Text(
-        text = "Events",
-        modifier = modifier,
-      )
-      LazyColumn {
-        items(events) {
-          Text(text = it)
-        }
+    EventsPanel(events = events, modifier = Modifier.weight(1.0f))
+  }
+}
+
+@Composable
+fun EventsPanel(
+  events: List<String>,
+  modifier: Modifier = Modifier,
+) {
+  val listState = rememberLazyListState()
+
+  val coroutineScope = rememberCoroutineScope()
+
+  LaunchedEffect(events.size) {
+    if (events.isNotEmpty()) {
+      coroutineScope.launch {
+        listState.animateScrollToItem(events.lastIndex)
+      }
+    }
+  }
+
+  Column(modifier = modifier.fillMaxWidth()) {
+    Text(text = "Events")
+    LazyColumn(state = listState, modifier = Modifier.weight(1.0f)) {
+      items(events) {
+        Text(text = it)
       }
     }
   }
