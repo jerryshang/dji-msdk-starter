@@ -46,6 +46,7 @@ class MooApp : Application() {
     xcrash.XCrash.init(this)
   }
 
+  @OptIn(ExperimentalStdlibApi::class)
   override fun onCreate() {
     super.onCreate()
 
@@ -104,7 +105,7 @@ class MooApp : Application() {
           postEvent("onDataFromPayloadUpdate")
           try {
             applicationScope.launch {
-              _inMessageStream.emit(bytes.decodeToString())
+              _inMessageStream.emit(bytes.toHexString())
             }
           } catch (e: Exception) {
             postEvent("onDataFromPayloadUpdate, error: $e")

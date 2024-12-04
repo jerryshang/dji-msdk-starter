@@ -41,23 +41,11 @@ fun HomeScreen(
       text = "Moo~ ${vm.name}!",
       modifier = modifier,
     )
-    Row(
-      modifier =
-        Modifier
-          .weight(1.0f)
-          .fillMaxWidth(),
-    ) {
-      Column(modifier = Modifier.weight(1f)) {
-        Text(
-          text = "Messages IN",
-          modifier = modifier,
-        )
-        LazyColumn {
-          items(inMessages) {
-            Text(text = it)
-          }
-        }
-      }
+    Row(modifier = Modifier.weight(1.0f).fillMaxWidth()) {
+      MessagesInPanel(
+        messages = inMessages,
+        modifier = Modifier.weight(1f),
+      )
       Column(modifier = Modifier.weight(1f)) {
         Text(
           text = "Messages OUT",
@@ -78,6 +66,35 @@ fun HomeScreen(
       }
     }
     EventsPanel(events = events, modifier = Modifier.weight(1.0f))
+  }
+}
+
+@Composable
+fun MessagesInPanel(
+  messages: List<String>,
+  modifier: Modifier = Modifier,
+) {
+  val listState = rememberLazyListState()
+
+  val coroutineScope = rememberCoroutineScope()
+  LaunchedEffect(messages.size) {
+    if (messages.isNotEmpty()) {
+      coroutineScope.launch {
+        listState.animateScrollToItem(messages.lastIndex)
+      }
+    }
+  }
+
+  Column(modifier = modifier) {
+    Text(
+      text = "Messages IN",
+      modifier = modifier,
+    )
+    LazyColumn(state = listState) {
+      items(messages) {
+        Text(text = it)
+      }
+    }
   }
 }
 
